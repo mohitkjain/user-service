@@ -9,6 +9,8 @@
 package com.example.user.service.service;
 
 import com.example.user.service.model.request.AddUserRequest;
+import com.example.user.service.model.request.UpdateUserRequest;
+import com.example.user.service.model.response.BaseResponse;
 import com.example.user.service.model.response.UserResponse;
 
 public interface UserService
@@ -16,4 +18,8 @@ public interface UserService
 	UserResponse addUser(AddUserRequest addUserRequest);
 
 	UserResponse getUser(String userId);
+
+	UserResponse updateUser(String userId, UpdateUserRequest updateUserRequest);
+
+	BaseResponse deleteUser(String userId);
 }

@@ -9,6 +9,8 @@
 package com.example.user.service.controller;
 
 import com.example.user.service.model.request.AddUserRequest;
+import com.example.user.service.model.request.UpdateUserRequest;
+import com.example.user.service.model.response.BaseResponse;
 import com.example.user.service.model.response.UserResponse;
 import com.example.user.service.service.UserService;
 import com.example.user.service.utility.JsonUtility;
@@ -20,9 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,10 +57,9 @@ public class UserController
 		{
 			modelValidator.handleValidationErrors(errors);
 		}
-		logger.info("Received request in addUser, request: \n " + JsonUtility.toJson(addUserRequest));
 
+		logger.info("Received request in addUser: \n " + JsonUtility.toJson(addUserRequest));
 		UserResponse userResponse = userService.addUser(addUserRequest);
-
 		logger.info("Response: \n" + JsonUtility.toJson(userResponse));
 
 		return new ResponseEntity<>(userResponse, HttpStatus.CREATED);
@@ -65,10 +68,37 @@ public class UserController
 	@GetMapping(path = "/{userId}", produces = mediaTypeVersion1)
 	public ResponseEntity<UserResponse> getUser(@PathVariable(name = "userId") String userId)
 	{
-		logger.info("Received request in getUser for userId: "+ userId);
+		logger.info("Received request in getUser for userId: " + userId);
 		UserResponse userResponse = userService.getUser(userId);
 		logger.info("Response: \n" + JsonUtility.toJson(userResponse));
 
 		return new ResponseEntity<>(userResponse, HttpStatus.OK);
+	}
+
+	@PutMapping(path = "/{userId}", produces = mediaTypeVersion1)
+	public ResponseEntity<UserResponse> updateUser(
+			@PathVariable(name = "userId") String userId, @RequestBody @Valid UpdateUserRequest updateUserRequest, @ApiIgnore Errors errors)
+	{
+		if (errors.hasErrors())
+		{
+			modelValidator.handleValidationErrors(errors);
+		}
+
+		logger.info("Received request in updateUser : \n " + JsonUtility.toJson(updateUserRequest));
+		UserResponse userResponse = userService.updateUser(userId, updateUserRequest);
+		logger.info("Response: \n" + JsonUtility.toJson(userResponse));
+
+		return new ResponseEntity<>(userResponse, HttpStatus.OK);
+	}
+
+	@DeleteMapping(path = "/{userId}", produces = mediaTypeVersion1)
+	public ResponseEntity<BaseResponse> deleteUser(
+			@PathVariable(name = "userId") String userId)
+	{
+		logger.info("Received request in deleteUser for userId: " + userId);
+		BaseResponse baseResponse = userService.deleteUser(userId);
+		logger.info("Response: \n" + JsonUtility.toJson(baseResponse));
+
+		return new ResponseEntity<>(baseResponse, HttpStatus.OK);
 	}
 }

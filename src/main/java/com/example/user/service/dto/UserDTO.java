@@ -14,6 +14,7 @@ import com.example.user.service.exception.NotFoundException;
 import com.example.user.service.exception.ValidationException;
 import com.example.user.service.model.errors.ValidationError;
 import com.example.user.service.model.request.AddUserRequest;
+import com.example.user.service.model.request.UpdateUserRequest;
 import com.example.user.service.model.response.UserResponse;
 import com.example.user.service.utility.JsonUtility;
 import com.google.gson.reflect.TypeToken;
@@ -89,5 +90,28 @@ public class UserDTO
 		userResponse.setLastUpdated(userEntity.getLastUpdatedStamp());
 
 		return userResponse;
+	}
+
+	public void updateUserEntity(UserEntity userEntity, UpdateUserRequest updateUserRequest)
+	{
+		userEntity.setName(updateUserRequest.getName());
+		userEntity.setMobile(updateUserRequest.getMobile());
+		userEntity.setEmail(updateUserRequest.getEmail());
+
+		UserStatus userStatus = EnumUtils.getEnum(UserStatus.class, updateUserRequest.getStatus());
+		if (userStatus == null)
+		{
+			logger.error("user status can not be null");
+			ValidationError validationError = new ValidationError("status", "status can not be null");
+			throw new ValidationException(validationError);
+		}
+		userEntity.setStatus(userStatus);
+
+		String dataJson = "{}";
+		if (!CollectionUtils.isEmpty(updateUserRequest.getData()))
+		{
+			dataJson = JsonUtility.toJson(updateUserRequest.getData());
+		}
+		userEntity.setData(dataJson);
 	}
 }

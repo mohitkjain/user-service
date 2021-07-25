@@ -14,6 +14,8 @@ import com.example.user.service.exception.NotFoundException;
 import com.example.user.service.exception.ValidationException;
 import com.example.user.service.model.errors.ValidationError;
 import com.example.user.service.model.request.AddUserRequest;
+import com.example.user.service.model.request.UpdateUserRequest;
+import com.example.user.service.model.response.BaseResponse;
 import com.example.user.service.model.response.UserResponse;
 import com.example.user.service.repository.UserRepository;
 import org.slf4j.Logger;
@@ -51,6 +53,40 @@ public class UserServiceImpl implements UserService
 	@Override
 	public UserResponse getUser(String userId)
 	{
+		UserResponse userResponse = userDTO.toUserResponse(getUserEntity(userId));
+		return userResponse;
+	}
+
+	@Override
+	public UserResponse updateUser(String userId, UpdateUserRequest updateUserRequest)
+	{
+		UserEntity userEntity = getUserEntity(userId);
+		userDTO.updateUserEntity(userEntity, updateUserRequest);
+
+		logger.info("Updating userEntity into DB");
+		userEntity = userRepository.save(userEntity);
+		logger.info("Updated userEntity into DB");
+
+		UserResponse userResponse = userDTO.toUserResponse(userEntity);
+		return userResponse;
+	}
+
+	@Override
+	public BaseResponse deleteUser(String userId)
+	{
+		UserEntity userEntity = getUserEntity(userId);
+
+		logger.info("Deleting userEntity from DB with userId " + userId);
+		userRepository.delete(userEntity);
+		logger.info("Deleted userEntity from DB with userId " + userId);
+
+		BaseResponse baseResponse = new BaseResponse();
+		baseResponse.setMessage("User has been deleted successfully with userId " + userId);
+		return baseResponse;
+	}
+
+	private UserEntity getUserEntity(String userId)
+	{
 		Long userIdLong;
 		try
 		{
@@ -64,14 +100,12 @@ public class UserServiceImpl implements UserService
 		}
 
 		Optional<UserEntity> userEntityOptional = userRepository.findByUserId(userIdLong);
-		if(!userEntityOptional.isPresent())
+		if (!userEntityOptional.isPresent())
 		{
 			logger.error("user not found with userId " + userIdLong);
 			throw new NotFoundException("user not found with userId " + userIdLong);
 		}
 		logger.info("Fetched userEntity from DB for userId " + userIdLong);
-		UserResponse userResponse = userDTO.toUserResponse(userEntityOptional.get());
-
-		return userResponse;
+		return userEntityOptional.get();
 	}
 }
