@@ -8,10 +8,15 @@
 
 package com.example.user.service.service;
 
+import com.example.user.service.model.FilterCriteria;
+import com.example.user.service.model.SortCriteria;
 import com.example.user.service.model.request.AddUserRequest;
 import com.example.user.service.model.request.UpdateUserRequest;
 import com.example.user.service.model.response.BaseResponse;
 import com.example.user.service.model.response.UserResponse;
+import com.example.user.service.model.response.UserResponseList;
+
+import java.util.List;
 
 public interface UserService
 {
@@ -22,4 +27,6 @@ public interface UserService
 	UserResponse updateUser(String userId, UpdateUserRequest updateUserRequest);
 
 	BaseResponse deleteUser(String userId);
+
+	UserResponseList getAllUsers(int pageSize, int pageNo, List<FilterCriteria> filterCriteriaList, List<SortCriteria> sortCriteriaList);
 }
