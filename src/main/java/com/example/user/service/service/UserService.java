@@ -14,4 +14,6 @@ import com.example.user.service.model.response.UserResponse;
 public interface UserService
 {
 	UserResponse addUser(AddUserRequest addUserRequest);
+
+	UserResponse getUser(String userId);
 }

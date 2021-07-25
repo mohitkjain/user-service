@@ -16,4 +16,10 @@ import lombok.Data;
 public class NotFoundException extends RuntimeException
 {
 	private String message;
+	private String debugMessage;
+
+	public NotFoundException(String message)
+	{
+		this.message = message;
+	}
 }

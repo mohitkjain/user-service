@@ -244,8 +244,8 @@ public class UserServiceExceptionHandler extends ResponseEntityExceptionHandler
 	public ResponseEntity<Object> notFoundExceptionHandler(NotFoundException ex)
 	{
 		UserServiceError apiError = new UserServiceError(NOT_FOUND);
-		apiError.setMessage("Not Found error");
-		apiError.setDebugMessage(ex.getMessage());
+		apiError.setMessage(ex.getMessage());
+		apiError.setDebugMessage(ex.getDebugMessage());
 
 		return buildResponseEntity(apiError);
 	}
